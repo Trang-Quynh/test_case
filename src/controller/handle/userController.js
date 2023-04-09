@@ -3,6 +3,7 @@ const qs = require('qs');
 const topicService = require('../../service/topicService')
 const userService = require('../../service/userService')
 const guestController = require('./guestController')
+const adminService = require("../../service/adminService");
 
 class UserController {
     getGeneralPostHtml = (generalPosts, userHtml) => {
@@ -79,7 +80,93 @@ class UserController {
         userHtml = userHtml.replace('{avatar}', avatarHtml)
         return userHtml
     }
+    getFriend = (accounts, adminHtml) => {
+        let accountHtml = '';
+        accounts.map((item) => {
+            accountHtml += `
+             <div class="hstack gap-2">
+                                    <!-- Avatar -->
+                  <div class="avatar">
+                      <img class="avatar-img rounded-circle" src="${item.avatar}" alt="">
+                  </div>
+                                    <!-- Title -->
+                  <div class="overflow-hidden">
+                      <a class="h6 mb-0" href="#!">${item.user_name}</a>
+                  </div>
+                                    <!-- Button -->
+                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
+                  <form method="POST">
+                   <input name="idAddFriend" type="hidden" value='${item.id_user}'>
+                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
+                   </form>
+                   </a>
+                   
+              </div>         
+            `
+        })
+        adminHtml = adminHtml.replace('{Account}', accountHtml)
 
+
+        return adminHtml
+    }
+    getAccountHtm = (accounts, adminHtml) => {
+        let accountHtml = '';
+        accounts.map((item) => {
+            accountHtml += `
+             <div class="hstack gap-2">
+                                    <!-- Avatar -->
+                  <div class="avatar">
+                      <img class="avatar-img rounded-circle" src="${item.avatar}" alt="">
+                  </div>
+                                    <!-- Title -->
+                  <div class="overflow-hidden">
+                      <a class="h6 mb-0" href="#!">${item.user_name}</a>
+                  </div>
+                                    <!-- Button -->
+                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
+                  <form method="POST">
+                   <input name="idAddFriend" type="hidden" value='${item.id_user}'>
+                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
+                   </form>
+                   </a>
+                   
+              </div>         
+            `
+        })
+        adminHtml = adminHtml.replace('{Account}', accountHtml)
+
+
+        return adminHtml
+    }
+    getAccountHtm = (accounts, adminHtml) => {
+        let accountHtml = '';
+        accounts.map((item) => {
+            accountHtml += `
+             <div class="hstack gap-2">
+                                    <!-- Avatar -->
+                  <div class="avatar">
+                      <img class="avatar-img rounded-circle" src="${item.avatar}" alt="">
+                  </div>
+                                    <!-- Title -->
+                  <div class="overflow-hidden">
+                      <a class="h6 mb-0" href="#!">${item.user_name}</a>
+                  </div>
+                                    <!-- Button -->
+                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
+                  <form method="POST">
+                   <input name="idAddFriend" type="hidden" value='${item.id_user}'>
+                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
+                   </form>
+                   </a>
+                   
+              </div>         
+            `
+        })
+        adminHtml = adminHtml.replace('{Account}', accountHtml)
+
+
+        return adminHtml
+    }
 
 
     blogUser = async (req, res, id) => {
@@ -90,7 +177,21 @@ class UserController {
                 let privatePosts = await userService.getPrivatePost(id)
                 userHtml = this.getPrivatePostHtml(privatePosts, userHtml)
                 let user = await userService.findUserById(id)
-                userHtml = this.getAvatar(user,userHtml)
+                userHtml = this.getAvatar(user,userHtml);
+
+                let allUserExceptMe = await userService.getAllUserExceptMe(id)
+                console.log(allUserExceptMe)
+
+
+
+                let check = await userService.checkRelationship(id, 1);
+                const rowDataPacket = check[0]
+                const checkFriend = !!rowDataPacket.check_friend.readInt8();
+                console.log(checkFriend)
+
+
+
+
                 res.write(userHtml);
                 res.end();
             })
@@ -212,6 +313,9 @@ class UserController {
             })
         }
     }
+
+
+
 }
 
 module.exports = new UserController

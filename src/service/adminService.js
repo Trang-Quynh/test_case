@@ -31,6 +31,20 @@ class AdminService {
         })
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     getAllPost(){
         return new Promise((resolve, reject) => {
             this.connect.query(`select content, img, title, id_post, topic_name, topic.id_topic, time from posts inner join topic where posts.id_topic = topic.id_topic;`, (err, posts) => {

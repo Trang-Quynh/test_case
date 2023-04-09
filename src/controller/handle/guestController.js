@@ -221,9 +221,7 @@ class GuestController {
             })
             req.on('end', async () => {
                 let user = qs.parse(data);
-                console.log(user)
                 let account = await guestService.getGuest(user);
-                console.log(account)
                 GuestController.currentUserId = account[0].id_user;
                 if (account.length === 0) {
                     res.writeHead(301, { 'location': '/' });

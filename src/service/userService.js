@@ -33,6 +33,7 @@ class UserService {
         })
     }
 
+
     getUser = (user) => {
         return new Promise((resolve, reject) => {
             this.connect.query(`select * from users where user_name = '${user.user_name}'and password = '${user.password}';`, (err, users) => {
@@ -134,8 +135,8 @@ class UserService {
     // Chap nhan loi moi ket ban
     acceptAddFriendRequets(id_user, id_partner){
         return new Promise((resolve, reject) => {
-            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1)
-            update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and id_user_02 = ${id_user}
+            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1);
+update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and id_user_02 = ${id_user}
             `, (err, posts) => {
                 if (err) {
                     reject(err)
@@ -147,8 +148,10 @@ class UserService {
     }
     // Check xem da la friend chua neu 1: friend;  0: da gui; null: chua gui
     checkRelationship(id_user, id_partner){
+        let allUserExceptMe = await userService.getAllUserExceptMe(id)
+        console.log(allUserExceptMe)
         return new Promise((resolve, reject) => {
-            this.connect.query(`select check_friend from friend_manager where id_user_01 = '${id_user}' and id_user_02 = ${id_partner}`, (err, data) => {
+            this.connect.query(`select check_friend from friend_manager where (id_user_01 = ${id_user} and id_user_02 = ${id_partner}) or  (id_user_01 = ${id_partner} and id_user_02 = ${id_user}) group by  check_friend`, (err, data) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -158,6 +161,23 @@ class UserService {
         })
     }
     // Tu choi loi moi ket ban
+
+
+
+
+
+    denyAddFriendRequest(id_user, id_partner){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`delete from friend_manager where id_user_01 = '${id_partner}' and id_user_02 = '${id_user}'`, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    }
+
 
 
 
@@ -213,5 +233,59 @@ class UserService {
             })
         })
     }
+
+    getFriend(id_user){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select friend_manager.id_user_02 from friend_manager right join account on friend_manager.id_user_01 = account.id_user where check_friend = 1 and id_user_01 = '${id_user}';`, (err, admins) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(admins)
+                }
+            })
+        })
+    }
+
+    getStranger(){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select * from friend_manager right join account on friend_manager.id_user_01 = account.id_user;`, (err, admins) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(admins)
+                }
+            })
+        })
+    }
+
+    getPending(id_user){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select friend_manager.id_user_02 from friend_manager right join account on friend_manager.id_user_01 = account.id_user where check_friend = 0 and id_user_01 = ${id_user};`, (err, admins) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(admins)
+                }
+            })
+        })
+    }
+
+
+    getAllUserExceptMe(id){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select id_user from account where id_user <> ${id};`, (err, admins) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(admins)
+                }
+            })
+        })
+    }
+
+
+
+
+
 }
 module.exports = new UserService();
