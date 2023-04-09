@@ -126,7 +126,7 @@ class UserController {
                   <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
                   <form method="POST">
                    <input name="idUnFriend" type="hidden" value='${item.id_user}'>
-                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
+                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="bi bi-person-check-fill"> </i></button>
                    </form>
                    </a>
                    
