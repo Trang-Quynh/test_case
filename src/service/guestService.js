@@ -45,6 +45,18 @@ class GuestService {
 
     }
 
+    getDetailPost(id){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select content, img, title, time, id_post, topic_name, status, id_user from posts inner join topic on posts.id_topic = topic.id_topic where id_post = ${id} ;`, (err, posts) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(posts)
+                }
+            })
+        })
+    }
+
 
 }
 module.exports = new GuestService();

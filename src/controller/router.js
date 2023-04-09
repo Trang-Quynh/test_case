@@ -20,7 +20,8 @@ const router = {
     "" : guestController.home,
     'editPost':userController.editPost,
     "addPost": userController.addPost,
-    'editAccount':userController.editAccount
+    'editAccount':userController.editAccount,
+    'post':guestController.blogDetails
 };
 
 module.exports = router;

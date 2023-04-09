@@ -108,13 +108,23 @@ class GuestController {
     }
 
 
-   static blogDetails =  (req, res) => {
-        fs.readFile('./src/views/blog-details.html', 'utf-8', (err, loginHtml) => {
-            res.write(loginHtml);
-            res.end();
+    static blogDetails = async (req, res,id) => {
+        if (req.method === 'GET') {
+            fs.readFile('./src/views/blog_details.html', 'utf-8', async (err, homeHtml) => {
+                let post = await guestService.getDetailPost(id)
+                console.log(homeHtml);
+                homeHtml = this.getBlogDetailHtml(post, homeHtml)
 
-        })
+                res.write(homeHtml);
+                res.end();
+            })
+        }
     }
+
+
+
+
+
    static profileConnection = (req, res) => {
         fs.readFile('./src/views/my-profile-connections.html', 'utf-8', (err, loginHtml) => {
             res.write(loginHtml);
@@ -211,6 +221,52 @@ class GuestController {
             res.end();
         })
     }
+
+
+    getDetailPost(id){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select content, img, title, time, id_post, topic_name, status, id_user from posts inner join topic on posts.id_topic = topic.id_topic where id_post = ${id} ;`, (err, posts) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(posts)
+                }
+            })
+        })
+    }
+    static getBlogDetailHtml = (post, blogDetailHtml) => {
+        let postHtml = '';
+        post.map((item) => {
+            postHtml = `
+        <div class="card card-body">
+        <img class="rounded" src="${item.img}" alt="">
+        <div class="mt-4">
+            <!-- Tag -->
+            <a href="#" class="badge bg-danger bg-opacity-10 text-danger mb-2 fw-bold">${item.topic_name}</a>
+            <!-- Title info -->
+            <h1 class="mb-2 h2">${item.title}</h1>
+            <ul class="nav nav-stack gap-3 align-items-center">
+                <li class="nav-item">
+                    <div class="nav-link">
+                        by <a href="#" class="text-reset btn-link">{Author}</a>
+                    </div>
+                </li>
+                <li class="nav-item"> <i class="bi bi-calendar-date pe-1"></i>Nov 15, 2022</li>
+                <li class="nav-item"> <i class="bi bi-clock pe-1"></i>5 min read</li>
+            </ul>
+            <!-- description -->
+            ${item.content}
+            <!-- Row END -->
+            <p class="mb-0"> All led out world this music while asked. Paid mind even sons does he door no. Attended overcame repeated it is perceived Marianne in. I think on style child of. Servants moreover in sensible it ye possible. Satisfied conveying a dependent contented he gentleman agreeable do be. </p>
+        </div>
+    </div>
+        `
+        })
+        blogDetailHtml = blogDetailHtml.replace('{post}', postHtml)
+        return blogDetailHtml
+    }
+
+
 
 }
 
