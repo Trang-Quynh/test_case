@@ -84,7 +84,7 @@ class UserService {
     // Tim cac bai viet theo tu khoa
     findGeneralPostByKeyword(id_user, keyword){
         return new Promise((resolve, reject) => {
-            this.connect.query(`select content, img, title,id_user, time, id_post, topic_name from posts inner join topic on posts.id_topic = topic.id_topic where content like '%${keyword}%' and ((status = 'public' and id_user <> '${id_user}' ) or ((select check_friend from friend_manager where id_user_01 = id_user and id_user_02 = '${id_user}') = 1 and status = 'friend'));`, (err, posts) => {
+            this.connect.query(`select content, img, title,id_user, time, id_post, topic_name from posts inner join topic on posts.id_topic = topic.id_topic where (content like '%${keyword}%' or title like '%${keyword}%') and ((status = 'public' and id_user <> '${id_user}' ) or ((select check_friend from friend_manager where id_user_01 = id_user and id_user_02 = '${id_user}') = 1 and status = 'friend'));`, (err, posts) => {
                 if (err) {
                     reject(err)
                 } else {

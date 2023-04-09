@@ -34,7 +34,7 @@ class GuestService {
     }
     getPublicPostByKeyword(keyword){
         return new Promise((resolve, reject) => {
-            this.connect.query(`SELECT id_post, content, title, img, time, topic_name FROM posts inner join topic on topic.id_topic = posts.id_topic where status = 'public'  and content like '%${keyword}%' order by time desc;`, (err, posts) => {
+            this.connect.query(`SELECT id_post, content, title, img, time, topic_name FROM posts inner join topic on topic.id_topic = posts.id_topic where status = 'public'  and (content like '%${keyword}%' or title like '%${keyword}%') order by time desc;`, (err, posts) => {
                 if (err) {
                     reject(err)
                 } else {

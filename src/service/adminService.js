@@ -57,7 +57,7 @@ class AdminService {
 
     findPostByKeyword(keyword){
         return new Promise((resolve, reject) => {
-            this.connect.query(`select content, img, title, id_post, topic_name, topic.id_topic, time from posts inner join topic on posts.id_topic = topic.id_topic where content like '%${keyword}%';`, (err, posts) => {
+            this.connect.query(`select content, img, title, id_post, topic_name, topic.id_topic, time from posts inner join topic on posts.id_topic = topic.id_topic where (content like '%${keyword}%' or title like '%${keyword}%') ;`, (err, posts) => {
                 if (err) {
                     reject(err)
                 } else {
