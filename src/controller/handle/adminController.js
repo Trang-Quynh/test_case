@@ -2,6 +2,7 @@
 const fs = require('fs');
 const qs = require('qs');
 const adminService = require("../../service/adminService");
+const userService = require("../../service/userService");
 
 class AdminController {
     getBlogAdminHtml = (posts, adminHtml) => {
@@ -90,14 +91,25 @@ class AdminController {
                 data = data + chunk;
             })
             req.on('end', async () => {
-                let deletePost = qs.parse(data);
-                if (deletePost.idDelete) {
-                    let post_id = deletePost.idDelete
+                let receiveData = qs.parse(data);
+                if (receiveData.idDelete) {
+                    let post_id = receiveData.idDelete
                     console.log(post_id, 1111111)
                     await  adminService.deleteAPost(post_id);
                     res.writeHead(301, {location: '/blogAdmin'})
                     res.write('Success')
                     res.end();
+                }else if(receiveData.search) {
+                    let keyword = receiveData.search;
+                    let publicPostSearchByKeyword = await adminService.findPostByKeyword(keyword)
+                    console.log(publicPostSearchByKeyword)
+                    fs.readFile('./src/views/blog_admin.html', 'utf-8', async (err, adminHtml) => {
+                        adminHtml = this.getBlogAdminHtml(publicPostSearchByKeyword, adminHtml);
+                        let accounts = await adminService.getAllAccount()
+                        adminHtml = this.getAccountHtml(accounts, adminHtml)
+                        res.write(adminHtml);
+                        res.end();
+                    })
                 }
             })
             // const buffers = [];
@@ -112,8 +124,6 @@ class AdminController {
             //     res.writeHead(301, {location: '/home'})
             //     res.end();
             // }
-
-
         }
     }
 }

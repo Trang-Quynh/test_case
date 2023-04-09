@@ -91,21 +91,57 @@ class GuestController {
     }
 
    static home = async (req, res) => {
-        if(req.method === 'GET'){
-            fs.readFile('./src/views/blog.html', 'utf-8', async (err, homeHtml) => {
-                let posts = await guestService.getPublicPost()
-                homeHtml = this.getHomeHtml(posts,homeHtml)
-                let oldPosts = await guestService.getOldPublicPost();
-                homeHtml = this.getLastPost(oldPosts,homeHtml)
-                let topics = await topicService.findAllTopic();
-                homeHtml = this.getTopic(topics,homeHtml)
-                let admins = await adminService.getFounder();
-                homeHtml = this.getFounder(admins,homeHtml)
-                res.write(homeHtml);
-                res.end();
-            })
-        }
-    }
+       if (req.method === 'GET') {
+           fs.readFile('./src/views/blog.html', 'utf-8', async (err, homeHtml) => {
+               let posts = await guestService.getPublicPost()
+               homeHtml = this.getHomeHtml(posts, homeHtml)
+               let oldPosts = await guestService.getOldPublicPost();
+               homeHtml = this.getLastPost(oldPosts, homeHtml)
+               let topics = await topicService.findAllTopic();
+               homeHtml = this.getTopic(topics, homeHtml)
+               let admins = await adminService.getFounder();
+               homeHtml = this.getFounder(admins, homeHtml)
+               res.write(homeHtml);
+               res.end();
+           })
+       } else {
+           let data = ''
+           req.on('data', (chunk) => {
+               data = data + chunk;
+           })
+           req.on('end', async () => {
+               let receiveData = qs.parse(data);
+               if (receiveData.search) {
+                   let keyword = receiveData.search;
+                   let guestPublicPostSearchByKeyword = await guestService.getPublicPostByKeyword(keyword)
+                   fs.readFile('./src/views/blog.html', 'utf-8', async (err, homeHtml) => {
+                       homeHtml = this.getHomeHtml(guestPublicPostSearchByKeyword, homeHtml);
+                       let oldPosts = await guestService.getOldPublicPost();
+                       homeHtml = this.getLastPost(oldPosts, homeHtml)
+                       let topics = await topicService.findAllTopic();
+                       homeHtml = this.getTopic(topics, homeHtml)
+                       let admins = await adminService.getFounder();
+                       homeHtml = this.getFounder(admins, homeHtml)
+                       res.write(homeHtml);
+                       res.end();
+                   })
+               }
+           })
+       }
+   }
+
+//     else if(receiveData.search) {
+//     let keyword = receiveData.search;
+//     let generalPostSearchByKeyword = await userService.findGeneralPostByKeyword(id,keyword);
+//     let myPostSearchByKeyword = await userService.findMyPostByKeyword(id,keyword);
+//     fs.readFile('./src/views/blog_user.html', 'utf-8', async (err, userHtml) => {
+//     userHtml = this.getGeneralPostHtml(generalPostSearchByKeyword, userHtml);
+//     userHtml = this.getPrivatePostHtml(myPostSearchByKeyword, userHtml);
+//     res.write(userHtml);
+//     res.end();
+// })
+
+
 
 
     static blogDetails = async (req, res,id) => {
@@ -265,6 +301,8 @@ class GuestController {
         blogDetailHtml = blogDetailHtml.replace('{post}', postHtml)
         return blogDetailHtml
     }
+
+
 
 
 
