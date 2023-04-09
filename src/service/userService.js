@@ -135,9 +135,7 @@ class UserService {
     // Chap nhan loi moi ket ban
     acceptAddFriendRequets(id_user, id_partner){
         return new Promise((resolve, reject) => {
-            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1);
-update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and id_user_02 = ${id_user}
-            `, (err, posts) => {
+            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1); update friend_manager set check_friend = 1 where (id_user_01 = ${id_partner} and id_user_02 = ${id_user});`, (err, posts) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -148,8 +146,7 @@ update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and 
     }
     // Check xem da la friend chua neu 1: friend;  0: da gui; null: chua gui
     checkRelationship(id_user, id_partner){
-        let allUserExceptMe = await userService.getAllUserExceptMe(id)
-        console.log(allUserExceptMe)
+
         return new Promise((resolve, reject) => {
             this.connect.query(`select check_friend from friend_manager where (id_user_01 = ${id_user} and id_user_02 = ${id_partner}) or  (id_user_01 = ${id_partner} and id_user_02 = ${id_user}) group by  check_friend`, (err, data) => {
                 if (err) {
@@ -236,7 +233,7 @@ update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and 
 
     getFriend(id_user){
         return new Promise((resolve, reject) => {
-            this.connect.query(`select friend_manager.id_user_02 from friend_manager right join account on friend_manager.id_user_01 = account.id_user where check_friend = 1 and id_user_01 = '${id_user}';`, (err, admins) => {
+            this.connect.query(`select * from (select id_user_02 from account left join friend_manager on account.id_user = friend_manager.id_user_01 where id_user = ${id_user} and check_friend = 1) as bang1 inner join account on id_user_02 = account.id_user;`, (err, admins) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -246,9 +243,10 @@ update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and 
         })
     }
 
-    getStranger(){
+    getStranger(id_user){
         return new Promise((resolve, reject) => {
-            this.connect.query(`select * from friend_manager right join account on friend_manager.id_user_01 = account.id_user;`, (err, admins) => {
+            this.connect.query(`select * from account where account.id_user <> ${id_user} and account.id_user not in ( select id_user_02 from account left join friend_manager on account.id_user = friend_manager.id_user_01 where id_user = ${id_user} and check_friend = 1) and account.id_user not in (select id_user_01 from account left join friend_manager on account.id_user = friend_manager.id_user_01 where id_user_02 = ${id_user} and check_friend = 0) and account.id_user not in (select id_user_02 from account left join friend_manager on account.id_user = friend_manager.id_user_01 WHERE check_friend = 0 and id_user_01 = ${id_user})
+            `, (err, admins) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -260,7 +258,7 @@ update friend_manager set check_friend = 1 where id_user_01 = ${id_partner} and 
 
     getPending(id_user){
         return new Promise((resolve, reject) => {
-            this.connect.query(`select friend_manager.id_user_02 from friend_manager right join account on friend_manager.id_user_01 = account.id_user where check_friend = 0 and id_user_01 = ${id_user};`, (err, admins) => {
+            this.connect.query(`select * from (select id_user_01 from account left join friend_manager on account.id_user = friend_manager.id_user_01 where id_user_02 = ${id_user} and check_friend = 0) as bang1 inner join account on id_user_01 = account.id_user;`, (err, admins) => {
                 if (err) {
                     reject(err)
                 } else {

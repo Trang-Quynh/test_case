@@ -50,12 +50,12 @@ class UserController {
               </div>
               <div class="col-8">
                 <!-- Blog caption -->
-                <a href="#" class="badge bg-danger bg-opacity-10 text-danger mb-2 fw-bold">${item.topic_name}</a>
+                <a href="/post/${item.id_post}" class="badge bg-danger bg-opacity-10 text-danger mb-2 fw-bold">${item.topic_name}</a>
                 <h5><a class="btn-link stretched-link text-reset fw-bold">${item.title}</a></h5>
                 <div class="d-none d-sm-inline-block">
                   <p class="mb-2">${words[0]}</p>
                   <!-- BLog date -->
-                  <a class="small text-secondary" href="#!"> <i class="bi bi-calendar-date pe-1"></i>${item.time}</a>
+                  <a class="small text-secondary" href="/post/${item.id_post}"> <i class="bi bi-calendar-date pe-1"></i>${item.time}</a>
                 </div>
                 <form method="POST" onSubmit="return confirm ('Bạn có chắc chắn muốn xóa không?')">
                 <input name="idDelete" type="hidden" value='${item.id_post}'>
@@ -80,7 +80,7 @@ class UserController {
         userHtml = userHtml.replace('{avatar}', avatarHtml)
         return userHtml
     }
-    getFriend = (accounts, adminHtml) => {
+    getStranger = (accounts, adminHtml) => {
         let accountHtml = '';
         accounts.map((item) => {
             accountHtml += `
@@ -95,7 +95,7 @@ class UserController {
                   </div>
                                     <!-- Button -->
                   <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
-                  <form method="POST">
+                  <form method="post">
                    <input name="idAddFriend" type="hidden" value='${item.id_user}'>
                    <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
                    </form>
@@ -104,15 +104,16 @@ class UserController {
               </div>         
             `
         })
-        adminHtml = adminHtml.replace('{Account}', accountHtml)
+        adminHtml = adminHtml.replace('{Account2}', accountHtml)
 
 
         return adminHtml
     }
-    getAccountHtm = (accounts, adminHtml) => {
+    getAccountFriends = (accounts, adminHtml) => {
         let accountHtml = '';
         accounts.map((item) => {
             accountHtml += `
+
              <div class="hstack gap-2">
                                     <!-- Avatar -->
                   <div class="avatar">
@@ -125,7 +126,7 @@ class UserController {
                                     <!-- Button -->
                   <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
                   <form method="POST">
-                   <input name="idAddFriend" type="hidden" value='${item.id_user}'>
+                   <input name="idUnFriend" type="hidden" value='${item.id_user}'>
                    <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
                    </form>
                    </a>
@@ -133,12 +134,12 @@ class UserController {
               </div>         
             `
         })
-        adminHtml = adminHtml.replace('{Account}', accountHtml)
+        adminHtml = adminHtml.replace('{Account1}', accountHtml)
 
 
         return adminHtml
     }
-    getAccountHtm = (accounts, adminHtml) => {
+    getPending = (accounts, adminHtml) => {
         let accountHtml = '';
         accounts.map((item) => {
             accountHtml += `
@@ -154,7 +155,11 @@ class UserController {
                                     <!-- Button -->
                   <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
                   <form method="POST">
-                   <input name="idAddFriend" type="hidden" value='${item.id_user}'>
+                   <input name="accept" type="hidden" value='${item.id_user}'>
+                   <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
+                   </form>
+                   <form method="POST">
+                   <input name="refuse" type="hidden" value='${item.id_user}'>
                    <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
                    </form>
                    </a>
@@ -179,15 +184,21 @@ class UserController {
                 let user = await userService.findUserById(id)
                 userHtml = this.getAvatar(user,userHtml);
 
-                let allUserExceptMe = await userService.getAllUserExceptMe(id)
-                console.log(allUserExceptMe)
+
+                let friends = await  userService.getFriend(id)
+                console.log(friends)
+                userHtml = this.getAccountFriends(friends, userHtml)
+
+                let pending = await  userService.getPending(id)
+                console.log(pending)
+                userHtml = this.getPending(pending, userHtml)
+
+                let stranger = await  userService.getStranger(id)
+                console.log(stranger)
+                userHtml = this.getStranger(stranger, userHtml)
 
 
 
-                let check = await userService.checkRelationship(id, 1);
-                const rowDataPacket = check[0]
-                const checkFriend = !!rowDataPacket.check_friend.readInt8();
-                console.log(checkFriend)
 
 
 
@@ -217,6 +228,25 @@ class UserController {
                         res.write(userHtml);
                         res.end();
                     })
+                } else if(receiveData.idAddFriend) {
+                    let idPartner = receiveData.idAddFriend;
+                    await userService.sendAddFriendRequest(id,idPartner)
+                    res.writeHead(301, {location: `/blogUser/${id}`})
+                    res.end();
+
+                }else if(receiveData.accept) {
+                    let idPartner = receiveData.accept;
+                    console.log(idPartner)
+                    await userService.acceptAddFriendRequets(id,idPartner)
+                    res.writeHead(301, {location: `/blogUser/${id}`})
+                    res.end();
+
+                }else if(receiveData.refuse) {
+                    let idPartner = receiveData.refuse;
+                    await userService.denyAddFriendRequest(id,idPartner)
+                    res.writeHead(301, {location: `/blogUser/${id}`})
+                    res.end();
+
                 }
             })
         }
