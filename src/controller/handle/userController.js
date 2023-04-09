@@ -152,8 +152,8 @@ class UserController {
                       <a class="h6 mb-0" href="#!">${item.user_name}</a>
                   </div>
                                     <!-- Button -->
-                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">
-                  <form method="POST">
+<!--                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#">-->
+                   <form method="POST">
                    <input name="accept" type="hidden" value='${item.id_user}'>
                    <button type="submit" class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></button>
                    </form>
