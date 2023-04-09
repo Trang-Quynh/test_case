@@ -133,17 +133,58 @@ class UserService {
         })
     }
     // Chap nhan loi moi ket ban
-    acceptAddFriendRequets(id_user, id_partner){
+    acceptAddFriendRequets1(id_user, id_partner){
         return new Promise((resolve, reject) => {
-            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1); update friend_manager set check_friend = 1 where (id_user_01 = ${id_partner} and id_user_02 = ${id_user});`, (err, posts) => {
+            this.connect.query(`insert into friend_manager values(${id_user},${id_partner},1);`, (err) => {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve('accepted add friend request')
+                    resolve('added')
                 }
             })
         })
     }
+    acceptAddFriendRequets2(id_user, id_partner){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`update friend_manager set check_friend = 1 where (id_user_01 = ${id_partner} and id_user_02 = ${id_user});`, (err, posts) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve('statusChanged')
+                }
+            })
+        })
+    }
+
+
+    unfriend1(id_user, id_partner){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`delete from friend_manager where (id_user_01 = ${id_user} and id_user_02 = ${id_partner});`, (err, posts) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve('statusChanged')
+                }
+            })
+        })
+    }
+
+
+    unfriend2(id_user, id_partner){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`delete from friend_manager where (id_user_01 = ${id_partner} and id_user_02 = ${id_user})`, (err, posts) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve('statusChanged')
+                }
+            })
+        })
+    }
+
+
+
+
     // Check xem da la friend chua neu 1: friend;  0: da gui; null: chua gui
     checkRelationship(id_user, id_partner){
 
@@ -174,6 +215,9 @@ class UserService {
             })
         })
     }
+
+
+
 
 
 

@@ -73,7 +73,6 @@ class UserController {
 
 
     getAvatar= (user,userHtml) => {
-        console.log(user)
         let avatarHtml = `
          <img className="avatar-img rounded-2"  width="20" height="20" src="${user[0].img}" alt="">
         `
@@ -104,7 +103,7 @@ class UserController {
               </div>         
             `
         })
-        adminHtml = adminHtml.replace('{Account2}', accountHtml)
+        adminHtml = adminHtml.replace('{Stranger}', accountHtml)
 
 
         return adminHtml
@@ -134,7 +133,7 @@ class UserController {
               </div>         
             `
         })
-        adminHtml = adminHtml.replace('{Account1}', accountHtml)
+        adminHtml = adminHtml.replace('{Friends}', accountHtml)
 
 
         return adminHtml
@@ -167,7 +166,7 @@ class UserController {
               </div>         
             `
         })
-        adminHtml = adminHtml.replace('{Account}', accountHtml)
+        adminHtml = adminHtml.replace('{Friend request}', accountHtml)
 
 
         return adminHtml
@@ -186,15 +185,13 @@ class UserController {
 
 
                 let friends = await  userService.getFriend(id)
-                console.log(friends)
                 userHtml = this.getAccountFriends(friends, userHtml)
 
                 let pending = await  userService.getPending(id)
-                console.log(pending)
                 userHtml = this.getPending(pending, userHtml)
 
                 let stranger = await  userService.getStranger(id)
-                console.log(stranger)
+
                 userHtml = this.getStranger(stranger, userHtml)
 
 
@@ -236,17 +233,21 @@ class UserController {
 
                 }else if(receiveData.accept) {
                     let idPartner = receiveData.accept;
-                    console.log(idPartner)
-                    await userService.acceptAddFriendRequets(id,idPartner)
+                    await userService.acceptAddFriendRequets1(id,idPartner)
+                    await userService.acceptAddFriendRequets2(id,idPartner)
                     res.writeHead(301, {location: `/blogUser/${id}`})
                     res.end();
-
                 }else if(receiveData.refuse) {
                     let idPartner = receiveData.refuse;
                     await userService.denyAddFriendRequest(id,idPartner)
                     res.writeHead(301, {location: `/blogUser/${id}`})
                     res.end();
-
+                }else if(receiveData.idUnFriend){
+                    let idPartner = receiveData.idUnFriend;
+                    await userService.unfriend1(id,idPartner);
+                    await userService.unfriend2(id,idPartner);
+                    res.writeHead(301, {location: `/blogUser/${id}`})
+                    res.end();
                 }
             })
         }
@@ -289,12 +290,10 @@ class UserController {
 
     editAccount = async (req, res) => {
         let id = guestController.currentUserId
-        console.log(id)
         if (req.method === 'GET') {
 
             fs.readFile('./src/views/editAccount.html', 'utf-8', async (err, editHtml) => {
                 let user = await userService.findUserById(id)
-                console.log(user)
                 editHtml = editHtml.replace('{user_name}', user[0].user_name);
                 editHtml = editHtml.replace('{password}', user[0].password);
                 res.write(editHtml);
@@ -307,7 +306,6 @@ class UserController {
             })
             req.on('end', async () => {
                 let editUser = qs.parse(data);
-                console.log(editUser)
                 await userService.updateAccount(id, editUser)
                 res.writeHead(301, {location: `/blogUser/${id}`})
                 res.end();
