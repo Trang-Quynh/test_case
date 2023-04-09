@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const fsPromises = fs.promises;
 const router = require('./src/controller/router');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3700;
 let serveFile = require('./serveFile');
 const errorController = require('./src/controller/handle/errorController')
 

@@ -19,7 +19,8 @@ const router = {
     "offline" : guestController.offline,
     "" : guestController.home,
     'editPost':userController.editPost,
-    "addPost": userController.addPost
+    "addPost": userController.addPost,
+    'editAccount':userController.editAccount
 };
 
 module.exports = router;

@@ -71,17 +71,26 @@ class UserController {
     }
 
 
+    getAvatar= (user,userHtml) => {
+        console.log(user)
+        let avatarHtml = `
+         <img className="avatar-img rounded-2"  width="20" height="20" src="${user[0].img}" alt="">
+        `
+        userHtml = userHtml.replace('{avatar}', avatarHtml)
+        return userHtml
+    }
 
 
 
     blogUser = async (req, res, id) => {
-        console.log(req.method)
         if (req.method === 'GET') {
             fs.readFile('./src/views/blog_user.html', 'utf-8', async (err, userHtml) => {
                 let generalPosts = await userService.getGeneralPost(id)
                 userHtml = this.getGeneralPostHtml(generalPosts, userHtml)
                 let privatePosts = await userService.getPrivatePost(id)
                 userHtml = this.getPrivatePostHtml(privatePosts, userHtml)
+                let user = await userService.findUserById(id)
+                userHtml = this.getAvatar(user,userHtml)
                 res.write(userHtml);
                 res.end();
             })
@@ -92,38 +101,18 @@ class UserController {
             })
             req.on('end', async () => {
                 let receiveData = qs.parse(data);
-                console.log(receiveData)
                 if (receiveData.idDelete) {
                     let id_post = receiveData.idDelete
                     await userService.deleteAPost(id_post)
                     res.writeHead(301, {location: `/blogUser/${id}`})
                     res.end();
-                }
-                    else if(receiveData.search) {
+                } else if(receiveData.search) {
                     let keyword = receiveData.search;
-                    console.log(id + 'id user') // van dung
                     let generalPostSearchByKeyword = await userService.findGeneralPostByKeyword(id,keyword);
-                    console.log(generalPostSearchByKeyword)
-
                     let myPostSearchByKeyword = await userService.findMyPostByKeyword(id,keyword);
-
                     fs.readFile('./src/views/blog_user.html', 'utf-8', async (err, userHtml) => {
                         userHtml = this.getGeneralPostHtml(generalPostSearchByKeyword, userHtml);
                         userHtml = this.getPrivatePostHtml(myPostSearchByKeyword, userHtml);
-                        console.log(111)
-
-                        // for(let i = 0;i<postByKeyword.length;i++){
-                        //     console.log(postByKeyword[i].id_user)
-                        //     if(postByKeyword[i].id_user === id_user) {
-                        //         console.log("post by me")
-                        //         userHtml = this.getPrivatePostHtml(postByKeyword, userHtml)
-                        //     } else {
-                        //         console.log("post public")
-                        //
-                        //         userHtml = this.getGeneralPostHtml(postByKeyword, userHtml)
-                        //     }
-                        // }
-                        // res.writeHead(301, {location: `/blogUser/${id}`})
                         res.write(userHtml);
                         res.end();
                     })
@@ -133,7 +122,10 @@ class UserController {
     }
 
 
-    editPost = async (req, res, id) => {
+
+
+    editPost = async (req, res,id) => {
+
         if (req.method === 'GET') {
             fs.readFile('./src/views/editPost.html', 'utf-8', async (err, editHtml) => {
                 let post = await userService.findAPost(id)
@@ -155,13 +147,38 @@ class UserController {
             })
 
             req.on('end', async () => {
-                console.log(data)
                 let editPost = qs.parse(data);
-                console.log(editPost)
-                console.log(id)
                 //dung id
                 await userService.updateAPost(id,editPost)
                 res.writeHead(301, {location: `/blogUser/${guestController.currentUserId}`})
+                res.end();
+            })
+        }
+    }
+
+    editAccount = async (req, res) => {
+        let id = guestController.currentUserId
+        console.log(id)
+        if (req.method === 'GET') {
+
+            fs.readFile('./src/views/editAccount.html', 'utf-8', async (err, editHtml) => {
+                let user = await userService.findUserById(id)
+                console.log(user)
+                editHtml = editHtml.replace('{user_name}', user[0].user_name);
+                editHtml = editHtml.replace('{password}', user[0].password);
+                res.write(editHtml);
+                res.end()
+            })
+        } else {
+            let data = ''
+            req.on('data', (chunk) => {
+                data = data + chunk;
+            })
+            req.on('end', async () => {
+                let editUser = qs.parse(data);
+                console.log(editUser)
+                await userService.updateAccount(id, editUser)
+                res.writeHead(301, {location: `/blogUser/${id}`})
                 res.end();
             })
         }
@@ -171,7 +188,6 @@ class UserController {
         if (req.method === 'GET') {
             fs.readFile('./src/views/addPost.html', 'utf-8', async (err, addHtml) => {
                 let topics = await topicService.findAllTopic()
-                console.log(topics)
                 let htmlTopics = ''
                 topics.map(item => {
                     htmlTopics += `

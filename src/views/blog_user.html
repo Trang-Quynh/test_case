@@ -72,6 +72,7 @@ Header START -->
           <!-- Nav item 1 Pages -->
 
           <a href="/addPost" style=" font-weight: bold;">Add</a>
+          <a href="/editAccount" style=" font-weight: bold;">Edit Account</a>
           <!-- Nav item 2 Post -->
 
         </ul>
@@ -125,6 +126,209 @@ Header START -->
 </header>
 <!-- =======================
 Header END -->
+
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+
+  <!-- Container START -->
+  <div class="container">
+    <div class="row g-4">
+      <!-- Main content START -->
+      <div class="col-lg-8">
+        <div class="bg-mode p-4">
+          <h1 class="h4 mb-4">Latest blogs</h1>
+          {generalPosts}
+          {privatePosts}
+          <div class="mt-4">
+            <nav aria-label="navigation">
+              <ul class="pagination pagination-light d-inline-block d-md-flex justify-content-center">
+                <li class="page-item disabled">
+                  <a class="page-link" href="#">Prev</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">15</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">Next</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- Main content END -->
+
+      <!-- Right sidebar START -->
+      <div class="col-lg-4">
+        <div class="row g-4">
+          <!-- Card News START -->
+          <div class="col-sm-6 col-lg-12">
+            <div class="card">
+              <!-- Card header START -->
+              <div class="card-header pb-0 border-0">
+                <h5 class="card-title mb-0">Old posts</h5>
+              </div>
+              <!-- Card header END -->
+              <!-- Card body START -->
+              <div class="card-body">
+                {oldPost}
+                <!-- Load more comments -->
+                <a href="#!" role="button" class="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center" data-bs-toggle="button" aria-pressed="true">
+                  <div class="spinner-dots me-2">
+                    <span class="spinner-dot"></span>
+                    <span class="spinner-dot"></span>
+                    <span class="spinner-dot"></span>
+                  </div>
+
+                </a>
+              </div>
+              <!-- Card body END -->
+            </div>
+          </div>
+          <!-- Card News END -->
+
+          <!-- Card News START -->
+          <div class="col-sm-6 col-lg-12">
+            <div class="card">
+              <!-- Card header START -->
+              <div class="card-header pb-0 border-0">
+                <h5 class="card-title mb-0">Tags</h5>
+              </div>
+              <!-- Card header END -->
+              <!-- Card body START -->
+              <div class="card-body">
+                <!-- Tag list START -->
+                <ul class="list-inline mb-0 d-flex flex-wrap gap-2">
+                  {topic}
+
+
+                </ul>
+                <!-- Tag list END -->
+                <!-- Card body END -->
+              </div>
+            </div>
+            <!-- Card News END -->
+          </div>
+          <!-- Card follow START -->
+          <div class="col-sm-6 col-lg-12">
+            <div class="card">
+              <!-- Card header START -->
+              <div class="card-header pb-0 border-0">
+                <h5 class="card-title mb-0">Who to follow</h5>
+              </div>
+              <!-- Card header END -->
+              <!-- Card body START -->
+              <div class="card-body">
+
+                <!-- Connection item START -->
+                <div class="hstack gap-2 mb-3">
+                  <!-- Avatar -->
+                  <div class="avatar">
+                    <a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/11.jpg" alt=""> </a>
+                  </div>
+                  <!-- Title -->
+                  <div class="overflow-hidden">
+                    <a class="h6 mb-0" href="#!">Billy Vasquez </a>
+                    <p class="mb-0 small text-truncate">News anchor</p>
+                  </div>
+                  <!-- Button -->
+                  <a class="btn btn-primary rounded-circle icon-md ms-auto" href="#"><i class="bi bi-person-check-fill"> </i></a>
+                </div>
+                <!-- Connection item END -->
+
+                <!-- Connection item START -->
+                <div class="hstack gap-2 mb-3">
+                  <!-- Avatar -->
+                  <div class="avatar">
+                    <a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt=""> </a>
+                  </div>
+                  <!-- Title -->
+                  <div class="overflow-hidden">
+                    <a class="h6 mb-0" href="#!">Lori Ferguson </a>
+                    <p class="mb-0 small text-truncate">Web Developer at Webestica</p>
+                  </div>
+                  <!-- Button -->
+                  <a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
+                </div>
+                <!-- Connection item END -->
+
+                <!-- Connection item START -->
+                <div class="hstack gap-2">
+                  <!-- Avatar -->
+                  <div class="avatar">
+                    <a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""> </a>
+                  </div>
+                  <!-- Title -->
+                  <div class="overflow-hidden">
+                    <a class="h6 mb-0" href="#!">Carolyn Ortiz </a>
+                    <p class="mb-0 small text-truncate">News anchor</p>
+                  </div>
+                  <!-- Button -->
+                  <a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
+                </div>
+                <!-- Connection item END -->
+
+              </div>
+              <!-- Card body END -->
+            </div>
+          </div>
+          <!-- Card follow START -->
+        </div>
+        <!-- Right sidebar END -->
+      </div> <!-- Row END -->
+    </div>
+  </div>
+  <!-- Container END -->
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+<!-- footer START -->
+<footer class="bg-mode py-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Footer nav START -->
+        <ul class="nav justify-content-center justify-content-md-start lh-1">
+          <li class="nav-item">
+            <a class="nav-link" href="my-profile-about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" target="_blank" href="https://support.webestica.com/login">Support </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" target="_blank" href="docs/index.html">Docs </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="privacy-and-terms.html">Privacy & terms</a>
+          </li>
+        </ul>
+        <!-- Footer nav START -->
+      </div>
+      <div class="col-md-6">
+        <!-- Copyright START -->
+        <p class="text-center text-md-end mb-0">©2022 <a class="text-body" target="_blank" href="https://www.webestica.com/"> Webestica </a>All rights reserved.</p>
+        <!-- Copyright END -->
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer END -->
+
+<!-- =======================
+JS libraries, plugins and custom scripts -->
+
+<!-- Bootstrap JS -->
+<script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Functions -->
+<script src="assets/js/functions.js"></script>
+
+</body>
+
+<!-- Mirrored from social.webestica.com/blog.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 30 Jul 2022 02:47:49 GMT -->
+</html>
 
 <!-- **************** MAIN CONTENT START **************** -->
 <main>

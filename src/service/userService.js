@@ -7,6 +7,20 @@ class UserService {
         connection.connectToMySQL();
         this.connect = connection.getConnection();
     }
+
+    findUserById(id){
+        return new Promise((resolve, reject) => {
+            this.connect.query(`select user_name, password, avatar from account where id_user = '${id}';`, (err, user) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(user)
+                }
+            })
+        })
+    }
+
+
     findAPost = (id) => {
         return new Promise((resolve, reject) => {
             this.connect.query(`select title, content, img, status, topic_name, posts.id_topic from posts inner join topic on posts.id_topic = topic.id_topic where id_post = '${id}';`, (err, post) => {
@@ -30,9 +44,9 @@ class UserService {
             })
         })
     }
-    updateAccount = (user) => {
+    updateAccount = (id, user) => {
         return new Promise((resolve, reject) => {
-            this.connect.query(`update account set user_name = '${user.user_name}', password = '${user.password}', avatar = '${user.img}'`, (err, user) => {
+            this.connect.query(`update account set user_name = '${user.user_name}', password = '${user.password}', avatar = '${user.img}' where id_user = ${id}`, (err, user) => {
                 if (err) {
                     reject(err)
                 } else {

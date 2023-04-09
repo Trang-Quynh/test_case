@@ -3,6 +3,7 @@ const qs = require('qs')
 const guestService = require('../../service/guestService')
 const topicService = require('../../service/topicService')
 const adminService = require('../../service/adminService')
+const userService = require('../../service/userService')
 const cookie = require('cookie')
 
 class GuestController {
@@ -88,7 +89,6 @@ class GuestController {
         homeHtml = homeHtml.replace('{admin}', adminHtml)
         return homeHtml
     }
-
 
    static home = async (req, res) => {
         if(req.method === 'GET'){
@@ -183,7 +183,7 @@ class GuestController {
                     res.writeHead(301, { 'location': '/' });
                     res.end()
                 } else {
-                    if (account[0].user_name === 'Cuong' && account[0].password === '123') {
+                    if (account[0].user_name === 'Nguyen Dinh Cuong' && account[0].password === '123') {
                         res.setHeader('Set-Cookie', cookie.serialize('user', JSON.stringify(account[0]), {
                             httpOnly: true,
                             maxAge: 60 * 60 * 24 * 7
