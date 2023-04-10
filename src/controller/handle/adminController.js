@@ -28,9 +28,9 @@ class AdminController {
                 </div>
               </div>
             </div>
-            <form method="POST">
+            <form method="POST" onSubmit="return confirm ('Bạn có chắc chắn muốn xóa không?')">
             <input name="idDelete" type="hidden" value='${item.id_post}'>
-            <button type="submit" class="btn btn-outline-warning">Delete</button>
+            <button type="submit" class="btn btn-outline-warning"  >Delete</button>
             </form>
             </div>
           <!-- Blog item END -->

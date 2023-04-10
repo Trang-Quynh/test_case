@@ -28,6 +28,8 @@ class UserController {
                   <a class="small text-secondary" href="#!"> <i class="bi bi-calendar-date pe-1"></i>${item.time}</a>
                 </div>
               </div>
+              </div>
+              </div>
           <!-- Blog item END -->
           <hr class="my-4">
             `
@@ -57,11 +59,17 @@ class UserController {
                   <!-- BLog date -->
                   <a class="small text-secondary" href="/post/${item.id_post}"> <i class="bi bi-calendar-date pe-1"></i>${item.time}</a>
                 </div>
+                <div style="display: flex;
+                flex-direction: row;
+                margin: 0px 4px;">
                 <form method="POST" onSubmit="return confirm ('Bạn có chắc chắn muốn xóa không?')">
                 <input name="idDelete" type="hidden" value='${item.id_post}'>
                 <button type="submit" class="btn btn-outline-warning">Delete</button>
                 </form>
-                <a type="button" class="btn btn-outline-success" href="/editPost/${item.id_post}">Update</a>
+                <a type="button" style="margin: 0 10px" class="btn btn-outline-success" href="/editPost/${item.id_post}">Update</a>
+</div>
+              </div>
+              </div>
               </div>
           <!-- Blog item END -->
           <hr class="my-4">

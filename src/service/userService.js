@@ -251,9 +251,7 @@ class UserService {
     // Tao bai viet
     createAPost(id_user, post){
         return new Promise((resolve, reject) => {
-            this.connect.query(`Insert into posts (id_user, content, img, title, time, id_topic, status)
- VALUES ('${id_user}', '${post.content}', '${post.img}', '${post.title}', now(), '${post.id_topic}' ,'${post.status}');
-`, (err, post) => {
+            this.connect.query(`Insert into posts (id_user, content, img, title, time, id_topic, status) VALUES ('${id_user}', '${post.content}', '${post.img}', '${post.title}', now(), '${post.id_topic}' ,'${post.status}');`, (err, post) => {
                 if (err) {
                     reject(err)
                 } else {

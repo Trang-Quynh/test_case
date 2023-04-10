@@ -208,7 +208,7 @@ class GuestController {
     }
 
 
-   static signIn = (req, res) => {
+    static signIn = (req, res) => {
         if (req.method === 'GET') {
             fs.readFile('./src/views/sign-in-advance.html', 'utf-8', (err, loginHtml) => {
                 res.write(loginHtml);
@@ -220,30 +220,37 @@ class GuestController {
                 data += chunk
             })
             req.on('end', async () => {
-                let user = qs.parse(data);
-                let account = await guestService.getGuest(user);
-                GuestController.currentUserId = account[0].id_user;
-                if (account.length === 0) {
-                    res.writeHead(301, { 'location': '/' });
-                    res.end()
-                } else {
-                    if (account[0].user_name === 'Nguyen Dinh Cuong' && account[0].password === '123') {
-                        res.setHeader('Set-Cookie', cookie.serialize('user', JSON.stringify(account[0]), {
-                            httpOnly: true,
-                            maxAge: 60 * 60 * 24 * 7
-                        }));
-                        res.writeHead(301, { 'location': '/blogAdmin' });
+
+                try{
+                    let user = qs.parse(data);
+                    let account = await guestService.getGuest(user);
+                    GuestController.currentUserId = account[0].id_user;
+                    if (account.length === 0) {
+                        res.writeHead(301, { 'location': '/' });
                         res.end()
                     } else {
-                        res.setHeader('Set-Cookie', cookie.serialize('user', JSON.stringify(account[0]), {
-                            httpOnly: true,
-                            maxAge: 60 * 60 * 24 * 7
-                        }));
-                        res.writeHead(301, { 'location': `/blogUser/${account[0].id_user}` });
+                        if (account[0].user_name === 'Nguyen Dinh Cuong' && account[0].password === '123') {
+                            res.setHeader('Set-Cookie', cookie.serialize('user', JSON.stringify(account[0]), {
+                                httpOnly: true,
+                                maxAge: 60 * 60 * 24 * 7
+                            }));
+                            res.writeHead(301, { 'location': '/blogAdmin' });
+                            res.end()
+                        } else {
+                            res.setHeader('Set-Cookie', cookie.serialize('user', JSON.stringify(account[0]), {
+                                httpOnly: true,
+                                maxAge: 60 * 60 * 24 * 7
+                            }));
+                            res.writeHead(301, { 'location': `/blogUser/${account[0].id_user}` });
 
-                        res.end()
-
+                            res.end()
+                        }
                     }
+                }catch(error){
+                    fs.readFile('./src/views/sign-in-advance.html', 'utf-8', (err, homeUserHtml) => {
+                        res.write(homeUserHtml);
+                        res.end();
+                    })
                 }
             })
         }
